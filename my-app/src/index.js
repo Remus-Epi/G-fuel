@@ -1,17 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-//import App from './App';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Navbar from './components/Navbar';
 
-const root = ReactDOM.createRoot(document.getElementById('root')); // Create the root element
-root.render(
-  <React.StrictMode>
-    <Navbar />
-    {/* Other components */}
-  </React.StrictMode>
-);
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();

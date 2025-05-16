@@ -1,25 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
-//import Header from './components/Header';
-import Navbar from './components/Navbar';
+import React from 'react';
+import Navbar from './components/Navbar'; // Adjust path as needed
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <Navbar />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Test content</h1>
     </div>
   );
 }
 
 export default App;
+
