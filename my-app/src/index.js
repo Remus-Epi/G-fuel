@@ -6,8 +6,8 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
-
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
+const loginForm = document.getElementById("loginForm");
+loginForm?.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const username = document.getElementById("username").value;
