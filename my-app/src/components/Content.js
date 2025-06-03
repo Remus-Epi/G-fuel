@@ -1,8 +1,6 @@
-import React from 'react';
-
 const Content = () => {
   return (
-    <div className="container-fluid">
+    <div id="root" className="container-fluid">
         <h1>Ia-ti energia pe ziua de azi cu G-Fuel</h1>
         <img src="gfuel-tub.png" alt="GFUEL DRINK"/>
         <ul class="textindex">
