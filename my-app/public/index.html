@@ -57,21 +57,7 @@
       <input type="password" id="password" placeholder="Password" required/>
       <button onclick="login()" type="button" class="btn btn-primary" value="Input">Login</button>
     </div>     
-    <script>
-      async function login() {
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
-
-          const response = await fetch("/login", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username, password })
-          });
-
-          const result = await response.json();
-          document.getElementById("message").textContent = result.message;
-          console.log(result.message)
-      }
+    <script src = "LOGIN.PATH"></script>
     </script>
     <script>
       async function search() {
