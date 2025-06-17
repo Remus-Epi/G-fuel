@@ -1,1 +1,0 @@
-console.log('This is plain JS running in the browser.');
