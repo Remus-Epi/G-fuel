@@ -1,0 +1,107 @@
+body, html{
+	width: 100%;
+	height: 100%;
+	background-image: url(index.jpg);
+	/*-webkit-background-size: cover;
+	o-background-size: cover;
+	background-size: cover;*/
+	/*background-size: cover;
+	background-image: linear-gradient(pink, blue, yellow);
+	background-image: radial-gradient(circle, yellow, pink , blue, pink);*/
+
+}
+
+header {
+	box-shadow: 4px 4px 5px #888888;
+}
+
+p {
+	color: #58b690;
+	background-color: rgba(4, 122, 30, 0.2);
+	font-size:200%;
+	text-align:center;
+	cursor: pointer;
+	box-shadow: 2px 5px 8px #888888;
+	font-family: 'Indie Flower', cursive;
+}
+
+p:hover{
+	color: #FF02D2F0;
+}
+
+h1 {
+	color: #58b690;
+	border: 3px solid rgba(52, 23, 77, 1);
+	position: static;
+	width: 100%;
+	box-shadow: 2px 5px 8px #888888;
+	text-align: center;
+	font-size: 2.5rem; /* Explicit font size for consistency */
+	line-height: 1.2; /* Override Bootstrap defaults */
+	margin: 0; /* Override Bootstrap defaults */
+	padding: 0; /* Reset padding */
+	font-weight: normal; /* Reset font weight */
+}
+
+h1:hover{
+	color: #FF02D2F0;
+	cursor: pointer;
+}
+
+li {
+	color: #58b690;	
+	list-style: none;
+	display: inline-block;
+	font-size: 130%;	
+
+}
+img {
+	height: 250px;
+	width: 600px;
+	/*float: right; pentru asta trebuie si un footer */
+}
+
+.textindex {
+	font-family: 'Indie Flower', cursive;
+}
+.login-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: right;
+	align-items: right;
+	border-radius: 5px;
+	font-size: 20px;
+	padding-left: 10px;
+}
+
+.form-control {
+	width: 300px;
+	height: 100ps;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 5px;
+	font-size: 20px;
+	padding-left: 10px;
+}
+
+.navbar {
+  font-size: 1.2rem; /* Standardize font size */
+  padding: 0.8rem 1.2rem; /* Consistent padding */
+  box-shadow: 3px 6px 10px #888888; /* Match shadow */
+}
+
+.nav-item {
+  margin-right: 20px; /* Add space between nav items */
+  font-size: larger;
+}	
+
+#contact-section {
+  padding: 20px; /* Add spacing inside the section */
+  margin-top: 20px; /* Add spacing above the section */
+  border-radius: 10px; /* Rounded corners */
+  float: left; /* Position the section on the left side */
+  max-width: 600px; /* Restrict the width to reduce blank space */
+
+}
