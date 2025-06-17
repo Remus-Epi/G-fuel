@@ -9,14 +9,14 @@ document.querySelector(".play-btn").addEventListener("click", function() {
     //     easing: 'ease-in-out'
     // });
     // console.log("Play button clicked");
-    const pool = require('../src/utils/RenderDbConnection.js');
-
-    pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('DB error:', err);
-    } else {
-        console.log('Connected at:', res.rows[0]);
-    }
+    document.querySelector(".play-btn").addEventListener("click", async function() {
+        try {
+            const response = await fetch('/api/db-query');
+            const data = await response.json();
+            console.log('Connected at:', data.timestamp);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     });
 
 });

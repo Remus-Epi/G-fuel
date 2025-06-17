@@ -29,3 +29,15 @@ const dbConfig = {
     }
 };
 
+
+// API endpoint for database query
+app.get('/api/db-query', async (req, res) => {
+    try {
+        const pool = require('./src/utils/RenderDbConnection.js');
+        const result = await pool.query('SELECT NOW()');
+        res.json({ timestamp: result.rows[0].now });
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+});
