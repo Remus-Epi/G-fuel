@@ -1,0 +1,96 @@
+html, body {
+	min-height: 100%;
+}
+
+body {
+	background-color: #eef1ee;
+}
+
+h1 {
+	color: #1f7a55;
+	background-color: rgba(255, 255, 255, 0.85);
+	border: 3px solid rgba(52, 23, 77, 1);
+	width: 100%;
+	text-align: center;
+	box-shadow: 2px 5px 8px #888888;
+	font-size: 2.5rem;
+	line-height: 1.2;
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+}
+
+h1:hover {
+	color: #c4009f;
+	cursor: pointer;
+}
+
+.search-form {
+	margin: 20px 0;
+}
+
+.product-card {
+	text-align: center;
+}
+
+.product-image {
+	width: 100%;
+	max-width: 240px;
+	height: auto;
+	cursor: pointer;
+	transition: transform 0.3s;
+}
+
+.product-image:hover {
+	transform: scale(1.15);
+}
+
+.product-name {
+	color: #1f7a55;
+	font-size: 1.25rem;
+	margin: 8px 0;
+}
+
+#no-results {
+	color: #1f7a55;
+	font-size: 1.25rem;
+	text-align: center;
+}
+
+.basket-count {
+	font-size: 1.2rem;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.login-container {
+	justify-content: flex-end;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	font-size: 20px;
+	padding-left: 10px;
+}
+
+.login-container h2 {
+	margin: 0;
+}
+
+.form-control {
+	width: 300px;
+	max-width: 100%;
+	border-radius: 5px;
+	font-size: 20px;
+	padding-left: 10px;
+}
+
+.navbar {
+	font-size: 1.2rem;
+	padding: 0.8rem 1.2rem;
+	box-shadow: 3px 6px 10px #888888;
+}
+
+.nav-item {
+	margin-right: 20px;
+	font-size: larger;
+}
