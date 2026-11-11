@@ -1,0 +1,38 @@
+body {
+  background-color: #eef1ee;
+}
+
+.register-card {
+  width: auto;
+  max-width: 560px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background-color: #fff;
+  border: 3px solid rgba(52, 23, 77, 1);
+  box-shadow: 2px 5px 8px #888888;
+}
+
+.register-card h1 {
+  color: #1f7a55;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .register-card {
+    margin: 16px;
+    padding: 24px 16px;
+  }
+}
+
+.cart-link {
+	font-weight: bold;
+	white-space: nowrap;
+	color: #1f7a55;
+	text-decoration: none;
+}
+
+.cart-link:hover {
+	color: #c4009f;
+}

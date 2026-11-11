@@ -46,6 +46,31 @@ h1:hover {
 	height: auto;
 }
 
+/* Four product tubs from the shop, shown in full (the old hero image was cropped). */
+.hero-tubs {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: flex-end;
+	gap: 8px;
+	margin: 16px auto;
+	max-width: 900px;
+}
+
+.hero-tubs img {
+	width: 23%;
+	min-width: 120px;
+	max-width: 200px;
+	height: auto;
+}
+
+.shop-cta {
+	margin: 16px 0 24px;
+	padding: 10px 40px;
+	font-family: 'Indie Flower', cursive;
+	font-size: 1.6rem;
+}
+
 .textindex {
 	font-family: 'Indie Flower', cursive;
 	padding-left: 0;
@@ -97,4 +122,15 @@ h1:hover {
 	float: left;
 	max-width: 600px;
 	background-color: rgba(255, 255, 255, 0.85);
+}
+
+.cart-link {
+	font-weight: bold;
+	white-space: nowrap;
+	color: #1f7a55;
+	text-decoration: none;
+}
+
+.cart-link:hover {
+	color: #c4009f;
 }
