@@ -3,12 +3,15 @@
 // { items: [{ productId, name, price, imageUrl, quantity, lineTotal }], totalQuantity, totalPrice }
 // Requires login.js (Auth) to be loaded first.
 const Cart = (() => {
+  // State is shared across pages: a local cart for guests, the API for accounts.
   const GUEST_KEY = "gfuel-cart";
   const MAX_QTY = 99;
   let productsPromise = null;
   let current = { items: [], totalQuantity: 0, totalPrice: 0 };
 
   function products() {
+    // The catalog is cached while the page is open; on error the cache is cleared
+    // so that a later retry can redo the request.
     if (!productsPromise) {
       productsPromise = fetch("/api/products").then((r) => {
         if (!r.ok) throw new Error("Could not load products");
@@ -20,6 +23,7 @@ const Cart = (() => {
   }
 
   function readGuest() {
+    // localStorage may contain corrupt JSON or may be blocked by the browser.
     try { return JSON.parse(localStorage.getItem(GUEST_KEY)) || {}; } catch { return {}; }
   }
   function writeGuest(cart) {
@@ -31,6 +35,7 @@ const Cart = (() => {
   }
 
   async function guestCart() {
+    // Enriches local quantities with current catalog data and computes the totals.
     const guest = readGuest();
     const list = await products();
     const items = list
@@ -47,6 +52,7 @@ const Cart = (() => {
   }
 
   async function api(method, path, body) {
+    // All authenticated cart requests go through this function and send the JWT.
     const response = await fetch(`/api/cart${path}`, {
       method,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${Auth.token()}` },
@@ -62,6 +68,7 @@ const Cart = (() => {
   }
 
   function publish(cart) {
+    // Updates the state and the navbar badges, and notifies open pages.
     current = cart;
     document.querySelectorAll(".cart-count").forEach((el) => { el.textContent = cart.totalQuantity; });
     window.dispatchEvent(new CustomEvent("cart-change", { detail: cart }));
@@ -73,6 +80,7 @@ const Cart = (() => {
   }
 
   async function setQuantity(productId, quantity) {
+    // Quantity is capped on the client for quick feedback; the server validates it again.
     const q = Math.max(0, Math.min(MAX_QTY, quantity));
     if (Auth.token()) {
       return publish(await api("PUT", `/items/${productId}`, { quantity: q }));
@@ -96,6 +104,7 @@ const Cart = (() => {
 
   // Move the guest cart into the account after login.
   async function mergeGuest() {
+    // On login, merge local items with the account's items, then clear the local copy.
     const items = Object.entries(readGuest())
       .map(([id, quantity]) => ({ productId: Number(id), quantity }))
       .filter((i) => i.quantity > 0);
@@ -106,6 +115,7 @@ const Cart = (() => {
   }
 
   window.addEventListener("auth-change", (event) => {
+    // A session change selects the correct source for the cart.
     (event.detail.loggedIn ? mergeGuest() : refresh()).catch((e) => console.error(e));
   });
 

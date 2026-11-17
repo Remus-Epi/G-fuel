@@ -1,6 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
-const pool = require('../utils/RenderDbConnection.js');
+const pool = require('../utils/db.js');
 
 const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -11,6 +11,7 @@ const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 5;
 const hits = new Map();
 function rateLimited(ip) {
+  // The sliding window keeps only recent timestamps; the limit is per IP and per process.
   const now = Date.now();
   const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
@@ -32,6 +33,7 @@ if (!smtpConfigured) {
 }
 
 function clean(value, max) {
+  // Normalizes whitespace and enforces length limits before validation/persistence.
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
 }
 
@@ -53,6 +55,7 @@ router.post('/', async (req, res) => {
     return res.status(429).json({ error: 'Too many messages. Please try again later.' });
   }
 
+  // We save the message first, so an unavailable SMTP server does not lose the user's request.
   let id;
   try {
     const result = await pool.query(
@@ -65,6 +68,7 @@ router.post('/', async (req, res) => {
     return res.status(500).json({ error: 'Could not save your message' });
   }
 
+  // Sending is optional. email_sent stays false if SMTP is missing or fails.
   let emailSent = false;
   if (transporter) {
     try {

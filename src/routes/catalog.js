@@ -1,8 +1,10 @@
 const express = require('express');
-const pool = require('../utils/RenderDbConnection.js');
+const pool = require('../utils/db.js');
 
 const router = express.Router();
 
+// Shared SQL fragment, so the product list and product detail have the same shape.
+// camelCase aliases are directly consumable by the browser-side JavaScript.
 const PRODUCT_SELECT = `
   SELECT p.id, p.name, p.description, p.price::float AS price, p.image_url AS "imageUrl",
          json_build_object('id', c.id, 'slug', c.slug, 'name', c.name) AS category
@@ -12,6 +14,7 @@ const PRODUCT_SELECT = `
 // GET /api/categories
 router.get('/categories', async (req, res) => {
   try {
+    // LEFT JOIN keeps categories with no products too; COUNT counts the linked products.
     const result = await pool.query(
       `SELECT c.id, c.slug, c.name, COUNT(p.id)::int AS "productCount"
        FROM categories c
@@ -29,6 +32,8 @@ router.get('/categories', async (req, res) => {
 // GET /api/products  (optional ?category=<slug>)
 router.get('/products', async (req, res) => {
   try {
+    // If the category slug is present, the value is passed as a parameter ($1), not
+    // concatenated into the SQL; otherwise the full catalog is returned.
     const { category } = req.query;
     const result = category
       ? await pool.query(`${PRODUCT_SELECT} WHERE c.slug = $1 ORDER BY p.id`, [category])
@@ -42,6 +47,7 @@ router.get('/products', async (req, res) => {
 
 // GET /api/products/:id
 router.get('/products/:id', async (req, res) => {
+  // The check limits the ID to a positive integer accepted by PostgreSQL's INTEGER.
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id < 1 || id > 2147483647) {
     return res.status(400).json({ error: 'Product id must be a positive integer' });

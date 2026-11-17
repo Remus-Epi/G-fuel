@@ -39,6 +39,7 @@ h1:hover {
 	cursor: pointer;
 }
 
+/* Main page styles: the hero area and the featured product images. */
 .hero-image {
 	display: block;
 	width: 100%;
@@ -83,6 +84,7 @@ h1:hover {
 	font-size: 130%;
 }
 
+/* Alignment of the Auth form injected by login.js into the navbar. */
 .login-container {
 	justify-content: flex-end;
 	align-items: center;
@@ -115,6 +117,7 @@ h1:hover {
 	font-size: larger;
 }
 
+/* The contact form and the cart link in the navigation. */
 #contact-section {
 	padding: 20px;
 	margin-top: 20px;

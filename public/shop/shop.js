@@ -18,6 +18,8 @@ function showError(message) {
 }
 
 function createCard(product) {
+  // Builds the card via DOM APIs; product text inserted as textContent is not
+  // interpreted as HTML. The buttons update the shared cart immediately.
   const card = document.createElement("div");
   card.className = "col-12 col-sm-6 col-lg-3 product-card";
   card.dataset.name = product.name;
@@ -88,6 +90,7 @@ function createCard(product) {
 }
 
 function updateCard(card, quantity) {
+  // Syncs the displayed number and disables actions at the cart limits.
   const [minus, plus] = card.querySelectorAll(".qty-control button");
   card.querySelector(".qty").textContent = quantity;
   minus.disabled = quantity === 0;
@@ -95,6 +98,7 @@ function updateCard(card, quantity) {
 }
 
 function compareProducts(a, b) {
+  // The comparison determines the visual order for the option chosen in the select.
   switch (sortSelect.value) {
     case "name-asc":
       return a.name.localeCompare(b.name);
@@ -109,6 +113,7 @@ function compareProducts(a, b) {
 
 // Applies the search, category and sort settings to the grid.
 function render() {
+  // Filtering by name and category is applied before reordering the DOM.
   const query = searchInput.value.trim().toLowerCase();
   const ordered = [...cards.values()].sort((a, b) => compareProducts(a.product, b.product));
 
@@ -124,6 +129,7 @@ function render() {
 }
 
 function renderCategoryFilters(products) {
+  // Filters are generated from the categories present in the API response, not hardcoded.
   const categories = new Map();
   for (const p of products) categories.set(p.category.slug, p.category.name);
 

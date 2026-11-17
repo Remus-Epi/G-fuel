@@ -21,6 +21,7 @@ function showNotFound(message) {
 }
 
 function refreshControls() {
+  // Shows the product's global quantity from Cart and the button state.
   const quantity = product ? Cart.quantityOf(product.id) : 0;
   qtyValue.textContent = quantity;
   minusBtn.disabled = quantity === 0;
@@ -31,6 +32,7 @@ function refreshControls() {
 }
 
 async function change(delta) {
+  // Temporarily disable the buttons to avoid concurrent clicks during the request.
   minusBtn.disabled = plusBtn.disabled = true;
   errorBox.hidden = true;
   try {
@@ -49,7 +51,7 @@ window.addEventListener("cart-change", () => {
   if (product) refreshControls();
 });
 
-// Reads ?id=<number> and checks it is a positive integer before calling the API.
+// URLSearchParams extracts the id from the query string; the server validates it again.
 const params = new URLSearchParams(window.location.search);
 const rawId = params.get("id");
 const id = Number(rawId);

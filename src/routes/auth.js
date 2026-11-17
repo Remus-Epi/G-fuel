@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const pool = require('../utils/RenderDbConnection.js');
+const pool = require('../utils/db.js');
 const { sendMail, mailConfigured } = require('../utils/mailer.js');
 
 const router = express.Router();
@@ -16,6 +16,7 @@ const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 5;
 const hits = new Map();
 function rateLimited(ip) {
+  // Keeps the IP's recent attempts in a 10-minute sliding window.
   const now = Date.now();
   const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
@@ -24,10 +25,12 @@ function rateLimited(ip) {
 }
 
 function sha256(value) {
+  // The hash lets us compare tokens without storing the secret in the database.
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
 function publicUser(row) {
+  // An explicit field list prevents accidentally exposing password_hash.
   return {
     id: row.id,
     email: row.email,
@@ -38,6 +41,7 @@ function publicUser(row) {
 }
 
 function signToken(user) {
+  // sub identifies the user; the one-hour expiry limits how long a stolen token is useful.
   return jwt.sign({ sub: String(user.id), email: user.email }, process.env.JWT_SECRET, {
     expiresIn: TOKEN_TTL,
   });
@@ -55,6 +59,8 @@ router.post('/register', async (req, res) => {
   }
 
   try {
+    // bcrypt adds a salt and a work factor; the parameterized INSERT keeps data
+    // separate from the SQL statement, and RETURNING avoids an extra query.
     const passwordHash = await bcrypt.hash(password, 10);
     const result = await pool.query(
       `INSERT INTO users (email, password_hash, first_name, last_name)
@@ -81,6 +87,7 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    // The lookup ignores case differences, just like the unique SQL index.
     const result = await pool.query(
       `SELECT id, email, password_hash, first_name, last_name, created_at
        FROM users WHERE LOWER(email) = LOWER($1)`,
@@ -116,8 +123,12 @@ router.post('/forgot-password', async (req, res) => {
       'SELECT id, email FROM users WHERE LOWER(email) = LOWER($1)',
       [email]
     );
+    // The external response is identical for existing and non-existing addresses
+    // (protection against account enumeration).
     const user = result.rows[0];
     if (user) {
+      // The token has random entropy; the DB only gets its hash, while the email
+      // gets the original secret, which is presented only once.
       const token = crypto.randomBytes(32).toString('hex');
       const expiresAt = new Date(Date.now() + RESET_TTL_MS);
       await pool.query('DELETE FROM password_resets WHERE user_id = $1 AND used_at IS NULL', [user.id]);
@@ -156,9 +167,12 @@ router.post('/reset-password', async (req, res) => {
     return res.status(400).json({ error: 'Password must be 8-72 characters long' });
   }
 
+  // A dedicated client is needed so BEGIN/COMMIT use the same connection.
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    // FOR UPDATE locks the row while we check the token and change the password,
+    // so two concurrent requests cannot consume the token twice.
     const found = await client.query(
       `SELECT user_id FROM password_resets
        WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW()

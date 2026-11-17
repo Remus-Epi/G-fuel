@@ -25,6 +25,7 @@ h1:hover {
 	cursor: pointer;
 }
 
+/* Catalog search, filter and sort area. */
 .shop-controls {
 	margin: 20px 0;
 }
@@ -91,6 +92,7 @@ h1:hover {
 	width: auto;
 }
 
+/* Product cards, including visual states for image, price and quantity. */
 .product-card {
 	text-align: center;
 }
@@ -135,6 +137,7 @@ h1:hover {
 	text-align: center;
 }
 
+/* Persistent navbar elements and the quantity controls. */
 .cart-link {
 	font-weight: bold;
 	white-space: nowrap;

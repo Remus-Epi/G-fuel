@@ -6,6 +6,7 @@ const errorBox = document.querySelector("#cart-error");
 const modeEl = document.querySelector("#cart-mode");
 
 function formatPrice(value) {
+  // Prices arrive as numbers; two decimals are shown consistently in the cart.
   return `$${value.toFixed(2)}`;
 }
 
@@ -15,6 +16,7 @@ function showError(message) {
 }
 
 async function run(action) {
+  // Disable the controls during the request and re-read the state on error.
   errorBox.hidden = true;
   list.querySelectorAll("button").forEach((b) => { b.disabled = true; });
   try {
@@ -26,6 +28,7 @@ async function run(action) {
 }
 
 function button(label, ariaLabel, className, onClick) {
+  // Builds accessible buttons with labels for screen readers.
   const b = document.createElement("button");
   b.type = "button";
   b.className = className;
@@ -36,6 +39,7 @@ function button(label, ariaLabel, className, onClick) {
 }
 
 function render(cart) {
+  // Updates the page from the snapshot emitted by Cart; the old DOM is replaced.
   modeEl.textContent = Auth.token()
     ? "Your cart is saved to your account."
     : "You are not logged in. Your cart is saved in this browser and moves to your account when you log in.";
@@ -44,6 +48,7 @@ function render(cart) {
   content.hidden = cart.items.length === 0;
   totalEl.textContent = formatPrice(cart.totalPrice);
 
+  // Lines use DOM APIs and textContent, not server-produced HTML.
   list.replaceChildren(...cart.items.map((item) => {
     const li = document.createElement("li");
     li.className = "cart-item";

@@ -1,3 +1,4 @@
+/* JS notifications are grouped in a corner and animated without blocking the page. */
 .toast-stack {
   position: fixed;
   right: 16px;

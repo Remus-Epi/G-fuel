@@ -4,6 +4,7 @@ const statusBox = document.querySelector("#register-status");
 const password = document.querySelector("#password");
 const confirmPassword = document.querySelector("#confirmPassword");
 
+// Messages are shown on the same page, without alerts or reloads.
 function showStatus(message, type) {
   statusBox.textContent = message;
   statusBox.className = `alert alert-${type} mt-3`;
@@ -11,6 +12,7 @@ function showStatus(message, type) {
 }
 
 function validate() {
+  // Native HTML validation checks required/email/minlength; here we add password equality.
   confirmPassword.setCustomValidity(
     confirmPassword.value === password.value ? "" : "Passwords do not match"
   );
@@ -23,6 +25,7 @@ form.addEventListener("submit", async (event) => {
   statusBox.hidden = true;
   if (!validate()) return;
 
+  // confirmPassword is UI-only and is not sent to the server.
   const data = Object.fromEntries(new FormData(form));
   delete data.confirmPassword;
 
@@ -41,6 +44,7 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
+    // Registration logs the new account in immediately and triggers a cart sync.
     Auth.save(body.token, body.user);
     form.reset();
     form.classList.remove("was-validated");

@@ -1,4 +1,6 @@
 document.querySelector("#contact-section form").addEventListener("submit", async function (event) {
+  // The form is submitted via fetch without reloading the page; the server saves
+  // the message and separately attempts the optional email delivery.
   event.preventDefault();
 
   const form = event.target;
@@ -6,6 +8,7 @@ document.querySelector("#contact-section form").addEventListener("submit", async
   const button = form.querySelector("button[type=submit]");
 
   function show(message, type) {
+    // Bootstrap provides success/error colors; textContent avoids HTML interpretation.
     status.textContent = message;
     status.className = `alert alert-${type} mt-3`;
     status.hidden = false;

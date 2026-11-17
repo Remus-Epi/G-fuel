@@ -1,3 +1,4 @@
+/* Cart page layout: each product is a row with data and actions. */
 .cart-page {
   max-width: 900px;
   margin: 32px auto;

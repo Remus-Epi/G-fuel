@@ -1,11 +1,13 @@
 -- Schema and seed data. Safe to run more than once.
 
+-- Categories are the parents of products; the slug is the stable identifier in URLs/the API.
 CREATE TABLE IF NOT EXISTS categories (
   id   SERIAL PRIMARY KEY,
   slug VARCHAR(50)  NOT NULL UNIQUE,
   name VARCHAR(100) NOT NULL
 );
 
+-- The catalog stores the price as a number in the database and links each product to a category.
 CREATE TABLE IF NOT EXISTS products (
   id          SERIAL PRIMARY KEY,
   category_id INTEGER       NOT NULL REFERENCES categories(id),
@@ -17,6 +19,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 
+-- Accounts: the password is never stored in plain text, only as password_hash (bcrypt).
 CREATE TABLE IF NOT EXISTS users (
   id            SERIAL PRIMARY KEY,
   email         VARCHAR(255) NOT NULL,
@@ -28,6 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Emails are unique regardless of letter case.
 CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_idx ON users (LOWER(email));
 
+-- Idempotent seed: ON CONFLICT allows re-running without duplicates.
 INSERT INTO categories (slug, name) VALUES
   ('drinks',      'Drinks'),
   ('t-shirts',    'Tricouri'),
@@ -70,6 +74,7 @@ JOIN (VALUES
 ON CONFLICT (name) DO NOTHING;
 
 -- Messages from the "Keep in touch" form. Kept even if the email fails to send.
+-- Messages are persisted before the email is sent, so they are not lost if SMTP is down.
 CREATE TABLE IF NOT EXISTS contact_messages (
   id         SERIAL PRIMARY KEY,
   name       VARCHAR(100)  NOT NULL,
@@ -81,6 +86,8 @@ CREATE TABLE IF NOT EXISTS contact_messages (
 );
 
 -- Shopping cart for logged-in users. Guests keep their cart in the browser.
+-- The authenticated cart has one row per user/product pair.
+-- The composite key makes it possible to update the same line via UPSERT.
 CREATE TABLE IF NOT EXISTS cart_items (
   user_id    INTEGER     NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   product_id INTEGER     NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -90,6 +97,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
 );
 
 -- Password reset tokens. Only a SHA-256 hash of the token is stored.
+-- For resets, the token's hash is persisted, not the secret token sent by email.
 CREATE TABLE IF NOT EXISTS password_resets (
   id         SERIAL PRIMARY KEY,
   user_id    INTEGER     NOT NULL REFERENCES users(id) ON DELETE CASCADE,

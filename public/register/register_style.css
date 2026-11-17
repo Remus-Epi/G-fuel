@@ -2,6 +2,7 @@ body {
   background-color: #eef1ee;
 }
 
+/* Shared styles for the narrow account and password-reset forms. */
 .register-card {
   width: auto;
   max-width: 560px;

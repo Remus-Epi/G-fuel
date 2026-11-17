@@ -9,6 +9,7 @@
     <title>G-FUEL Cart</title>
   </head>
   <body>
+    <!-- Navigation and login; the badge is updated on the cart-change event. -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -32,6 +33,7 @@
       <p id="cart-mode" class="cart-mode"></p>
       <div id="cart-error" class="alert alert-danger" role="alert" hidden></div>
 
+      <!-- cart.js shows either the empty message or the line items and the summary computed by Cart. -->
       <div id="cart-empty" class="text-center my-5" hidden>
         <p class="fs-4">Your cart is empty.</p>
         <a class="btn btn-success" href="../shop/index.html">Go to the shop</a>

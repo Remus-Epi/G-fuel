@@ -1,6 +1,7 @@
 // Shared login widget. Renders into <div id="auth-slot"> on any page.
 // Fires "auth-change" on window with detail { loggedIn }.
 const Auth = (() => {
+  // Keys shared by all pages; the browser stores the token and a minimal profile.
   const TOKEN_KEY = "gfuel-token";
   const USER_KEY = "gfuel-user";
 
@@ -16,6 +17,7 @@ const Auth = (() => {
 
   function tokenValid(token) {
     try {
+      // We decode the payload only for display/UX. The server verifies the real signature.
       const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
       return payload.exp * 1000 > Date.now();
     } catch {
@@ -28,11 +30,13 @@ const Auth = (() => {
   }
 
   function token() {
+    // If the profile is missing or the token has expired, the UI treats it as a logout.
     const t = get(TOKEN_KEY);
     return t && user() && tokenValid(t) ? t : null;
   }
 
   function save(newToken, newUser) {
+    // Persist the local session, re-render the widget and tell the cart to sync.
     set(TOKEN_KEY, newToken);
     set(USER_KEY, JSON.stringify(newUser));
     render();
@@ -40,6 +44,7 @@ const Auth = (() => {
   }
 
   function clear() {
+    // Clear the local session and emit the event Cart listens for.
     remove(TOKEN_KEY);
     remove(USER_KEY);
     render();
@@ -52,6 +57,7 @@ const Auth = (() => {
     if (!slot) return;
     slot.replaceChildren();
 
+    // The same slot shows either a greeting/logout or the login form.
     if (token()) {
       const box = document.createElement("div");
       box.className = "login-container d-flex";
@@ -85,6 +91,7 @@ const Auth = (() => {
       const button = form.querySelector("button");
       button.disabled = true;
       try {
+        // The request sends the form as JSON; server messages are shown in the slot.
         const response = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

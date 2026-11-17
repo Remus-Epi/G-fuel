@@ -1,13 +1,16 @@
 const express = require('express');
-const pool = require('../utils/RenderDbConnection.js');
+const pool = require('../utils/db.js');
 const requireAuth = require('../middleware/requireAuth.js');
 
 const router = express.Router();
+// All cart operations require a valid token; router.use applies the check to every route.
 router.use(requireAuth);
 
 const MAX_QTY = 99;
 
 async function cartFor(userId, db = pool) {
+  // The JOIN attaches product details to each line, and totals are
+  // computed from current quantities/prices, not from values sent by the browser.
   const result = await db.query(
     `SELECT p.id AS "productId", p.name, p.price::float AS price, p.image_url AS "imageUrl",
             ci.quantity, (p.price * ci.quantity)::float AS "lineTotal"
@@ -26,11 +29,13 @@ async function cartFor(userId, db = pool) {
 }
 
 function parseId(value) {
+  // A single ID parser is used to reject invalid input before it reaches SQL.
   const id = Number(value);
   return Number.isInteger(id) && id > 0 && id <= 2147483647 ? id : null;
 }
 
 function handleError(res, error, label) {
+  // The foreign key can fail if the product does not exist; other errors stay generic.
   if (error.code === '23503') {
     return res.status(404).json({ error: 'Product not found' });
   }
@@ -58,6 +63,8 @@ router.put('/items/:productId', async (req, res) => {
     return res.status(400).json({ error: `Quantity must be an integer from 0 to ${MAX_QTY}` });
   }
   try {
+    // A quantity of zero means delete; a positive value uses UPSERT to
+    // insert a new line or replace the existing quantity atomically.
     if (quantity === 0) {
       await pool.query('DELETE FROM cart_items WHERE user_id = $1 AND product_id = $2', [req.userId, productId]);
     } else {
@@ -104,12 +111,15 @@ router.post('/merge', async (req, res) => {
   if (!Array.isArray(items) || items.length > 100) {
     return res.status(400).json({ error: 'items must be an array of at most 100 entries' });
   }
+  // Data from localStorage is untrusted: it is validated and the quantity will be
+  // capped in SQL. Non-existent products are not inserted thanks to the SELECT.
   const valid = items.filter(
     (i) => i && parseId(i.productId) && Number.isInteger(i.quantity) && i.quantity > 0
   );
 
   const client = await pool.connect();
   try {
+    // A transaction makes the cart import all-or-nothing if any SQL operation fails.
     await client.query('BEGIN');
     for (const item of valid) {
       await client.query(

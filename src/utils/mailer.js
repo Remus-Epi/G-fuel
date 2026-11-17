@@ -2,6 +2,8 @@
 const nodemailer = require('nodemailer');
 
 const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+// The transport is created once when the module loads. In development without
+// SMTP credentials, sendMail stays available and simply returns false.
 const transporter = configured
   ? nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -15,6 +17,7 @@ const transporter = configured
 async function sendMail({ to, subject, text }) {
   if (!transporter) return false;
   try {
+    // A true result confirms acceptance by the SMTP server, not final delivery.
     await transporter.sendMail({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to,

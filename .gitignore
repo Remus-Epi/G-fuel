@@ -1,2 +1,5 @@
 node_modules/
 .env
+
+# Database dumps contain user emails and password hashes. Keep them out of git.
+backups/

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="../../register/register_style.css">
   </head>
   <body>
+    <!-- This page is opened via the reset link, which carries the token in the query string. -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -26,6 +27,7 @@
       </div>
     </nav>
 
+    <!-- The new password and its confirmation are sent to the API together with the token. -->
     <main class="container register-card">
       <h1>Choose a new password</h1>
       <form id="reset-form" novalidate>

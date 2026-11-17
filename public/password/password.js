@@ -2,12 +2,14 @@
 const statusBox = document.querySelector("#password-status");
 
 function showStatus(message, type) {
+  // API messages are inserted as text, keeping them harmless to the DOM.
   statusBox.textContent = message;
   statusBox.className = `alert alert-${type} mt-3`;
   statusBox.hidden = false;
 }
 
 async function postJson(path, body) {
+  // Helper shared by both forms; parses the response defensively, including an empty body.
   const response = await fetch(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -30,6 +32,7 @@ if (forgotForm) {
     button.disabled = true;
     button.textContent = "Sending...";
     try {
+      // The endpoint responds the same way for existing and non-existing emails.
       const email = document.querySelector("#email").value;
       const { ok, data } = await postJson("/api/auth/forgot-password", { email });
       if (!ok) {
@@ -54,9 +57,11 @@ if (resetForm) {
   const button = document.querySelector("#reset-button");
   const password = document.querySelector("#password");
   const confirmPassword = document.querySelector("#confirmPassword");
+  // The secret token is in the query string of the link sent by email.
   const token = new URLSearchParams(window.location.search).get("token");
 
   function validate() {
+    // The browser applies the input rules and checks the password confirmation locally.
     confirmPassword.setCustomValidity(
       confirmPassword.value === password.value ? "" : "Passwords do not match"
     );
@@ -77,6 +82,7 @@ if (resetForm) {
     button.disabled = true;
     button.textContent = "Saving...";
     try {
+      // The token and password reach the API via POST, not via a URL visible in the address bar.
       const { ok, data } = await postJson("/api/auth/reset-password", {
         token,
         password: password.value,

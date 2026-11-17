@@ -1,0 +1,45 @@
+# Local stack: the web app and PostgreSQL.
+# Data lives in the named volume "gfuel_pgdata". `docker compose down` keeps it.
+# Only `docker compose down -v` deletes it.
+services:
+  db:
+    # PostgreSQL persists the project data; the healthcheck decides when web can start.
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gfuel
+      POSTGRES_USER: gfuel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gfuel_dev_password}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - gfuel_pgdata:/var/lib/postgresql
+      # Runs only when the volume is empty (first start). Later schema changes: npm run db:init
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gfuel -d gfuel"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    # Express and the static pages. .env provides the secrets, and the DB URL is
+    # overridden for Docker's internal DNS (the db service name).
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Overrides DATABASE_URL from .env so the app talks to the local db container.
+      DATABASE_URL: postgresql://gfuel:${POSTGRES_PASSWORD:-gfuel_dev_password}@db:5432/gfuel
+      DATABASE_SSL: "false"
+      PORT: "3001"
+      APP_URL: http://localhost:3001
+    ports:
+      - "${WEB_PORT:-3001}:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  gfuel_pgdata:

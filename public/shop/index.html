@@ -9,6 +9,7 @@
     <title>G-FUEL Shop</title>
   </head>
   <body>
+    <!-- Shared navbar, with the total number of items in the cart. -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -29,6 +30,7 @@
     <div class="container-fluid">
       <h1>Discover all G-Fuel flavors</h1>
 
+      <!-- The controls change the view locally; products and prices come from the API. -->
       <div class="shop-controls">
         <form class="search-form d-flex" id="searchForm" role="search">
           <input class="form-control me-2" id="search-input" type="search" placeholder="Search for a product" aria-label="Search" />
@@ -49,6 +51,7 @@
       </div>
 
       <div id="shop-error" class="alert alert-danger" role="alert" hidden></div>
+      <!-- shop.js builds the cards here from the /api/products response. -->
       <div class="row g-4" id="product-grid"></div>
       <p id="no-results" hidden>No products match your search.</p>
     </div>
